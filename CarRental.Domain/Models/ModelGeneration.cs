@@ -33,7 +33,7 @@ public class ModelGeneration
     /// <summary>
     /// Идентификатор модели автомобиля
     /// </summary>
-    public int ModelId { get; set; }
+    public required int ModelId { get; set; }
 
     /// <summary>
     /// Модель автомобиля

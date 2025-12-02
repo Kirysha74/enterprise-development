@@ -33,7 +33,7 @@ public class Rental
     /// <summary>
     /// Идентификатор клиента
     /// </summary>
-    public int ClientId { get; set; }
+    public required int ClientId { get; set; }
 
     /// <summary>
     /// Клиент, взявший автомобиль в аренду
