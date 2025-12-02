@@ -36,21 +36,21 @@ public static class TestData
     /// </summary>
     public static List<Client> Clients { get; } = new()
     {
-        new Client { Id = 1, LicenseNumber = "2023-001", FullName = "Смирнов Александр Петрович", BirthDate = new DateOnly(1988, 3, 15) },
-        new Client { Id = 2, LicenseNumber = "2022-045", FullName = "Коваленко Марина Викторовна", BirthDate = new DateOnly(1992, 7, 22) },
-        new Client { Id = 3, LicenseNumber = "2024-012", FullName = "Попов Денис Олегович", BirthDate = new DateOnly(1995, 11, 10) },
-        new Client { Id = 4, LicenseNumber = "2021-078", FullName = "Васнецова Елена Сергеевна", BirthDate = new DateOnly(1985, 5, 3) },
-        new Client { Id = 5, LicenseNumber = "2023-056", FullName = "Козловский Игорь Михайлович", BirthDate = new DateOnly(1990, 9, 30) },
-        new Client { Id = 6, LicenseNumber = "2022-123", FullName = "Орлова Анна Дмитриевна", BirthDate = new DateOnly(1993, 2, 14) },
-        new Client { Id = 7, LicenseNumber = "2024-034", FullName = "Белов Артем Владимирович", BirthDate = new DateOnly(1987, 8, 18) },
-        new Client { Id = 8, LicenseNumber = "2021-099", FullName = "Григорьева София Андреевна", BirthDate = new DateOnly(1994, 12, 25) },
-        new Client { Id = 9, LicenseNumber = "2023-087", FullName = "Мельников Павел Игоревич", BirthDate = new DateOnly(1991, 6, 7) },
-        new Client { Id = 10, LicenseNumber = "2022-067", FullName = "Захарова Ольга Александровна", BirthDate = new DateOnly(1989, 4, 12) },
-        new Client { Id = 11, LicenseNumber = "2024-005", FullName = "Тихонов Михаил Сергеевич", BirthDate = new DateOnly(1996, 10, 28) },
-        new Client { Id = 12, LicenseNumber = "2021-112", FullName = "Федорова Ксения Витальевна", BirthDate = new DateOnly(1986, 1, 19) },
-        new Client { Id = 13, LicenseNumber = "2023-092", FullName = "Соколов Роман Петрович", BirthDate = new DateOnly(1997, 7, 3) },
-        new Client { Id = 14, LicenseNumber = "2022-031", FullName = "Крылова Татьяна Алексеевна", BirthDate = new DateOnly(1984, 3, 22) },
-        new Client { Id = 15, LicenseNumber = "2024-021", FullName = "Давыдов Андрей Николаевич", BirthDate = new DateOnly(1998, 11, 15) }
+        new Client { Id = 1, LicenseNumber = "2023-001", FullName = "Alexander Smirnov", BirthDate = new DateOnly(1988, 3, 15) },
+        new Client { Id = 2, LicenseNumber = "2022-045", FullName = "Marina Kovalenko", BirthDate = new DateOnly(1992, 7, 22) },
+        new Client { Id = 3, LicenseNumber = "2024-012", FullName = "Denis Popov", BirthDate = new DateOnly(1995, 11, 10) },
+        new Client { Id = 4, LicenseNumber = "2021-078", FullName = "Elena Vasnetsova", BirthDate = new DateOnly(1985, 5, 3) },
+        new Client { Id = 5, LicenseNumber = "2023-056", FullName = "Igor Kozlovsky", BirthDate = new DateOnly(1990, 9, 30) },
+        new Client { Id = 6, LicenseNumber = "2022-123", FullName = "Anna Orlova", BirthDate = new DateOnly(1993, 2, 14) },
+        new Client { Id = 7, LicenseNumber = "2024-034", FullName = "Artem Belov", BirthDate = new DateOnly(1987, 8, 18) },
+        new Client { Id = 8, LicenseNumber = "2021-099", FullName = "Sofia Grigorieva", BirthDate = new DateOnly(1994, 12, 25) },
+        new Client { Id = 9, LicenseNumber = "2023-087", FullName = "Pavel Melnikov", BirthDate = new DateOnly(1991, 6, 7) },
+        new Client { Id = 10, LicenseNumber = "2022-067", FullName = "Olga Zakharova", BirthDate = new DateOnly(1989, 4, 12) },
+        new Client { Id = 11, LicenseNumber = "2024-005", FullName = "Mikhail Tikhonov", BirthDate = new DateOnly(1996, 10, 28) },
+        new Client { Id = 12, LicenseNumber = "2021-112", FullName = "Ksenia Fedorova", BirthDate = new DateOnly(1986, 1, 19) },
+        new Client { Id = 13, LicenseNumber = "2023-092", FullName = "Roman Sokolov", BirthDate = new DateOnly(1997, 7, 3) },
+        new Client { Id = 14, LicenseNumber = "2022-031", FullName = "Tatiana Krylova", BirthDate = new DateOnly(1984, 3, 22) },
+        new Client { Id = 15, LicenseNumber = "2024-021", FullName = "Andrey Davydov", BirthDate = new DateOnly(1998, 11, 15) }
     };
 
     /// <summary>
@@ -80,21 +80,21 @@ public static class TestData
     /// </summary>
     public static List<Car> Cars { get; } = new()
     {
-        new Car { Id = 1, LicensePlate = "А001АА163", Color = "Black", ModelGenerationId = 1, ModelGeneration = ModelGenerations[0] },
-        new Car { Id = 2, LicensePlate = "В777ВС163", Color = "Red", ModelGenerationId = 2, ModelGeneration = ModelGenerations[1] },
-        new Car { Id = 3, LicensePlate = "С123ЕТ163", Color = "White", ModelGenerationId = 3, ModelGeneration = ModelGenerations[2] },
-        new Car { Id = 4, LicensePlate = "Е555КХ163", Color = "Green", ModelGenerationId = 4, ModelGeneration = ModelGenerations[3] },
-        new Car { Id = 5, LicensePlate = "К234МР163", Color = "Silver", ModelGenerationId = 5, ModelGeneration = ModelGenerations[4] },
-        new Car { Id = 6, LicensePlate = "М888ОА163", Color = "Gray", ModelGenerationId = 6, ModelGeneration = ModelGenerations[5] },
-        new Car { Id = 7, LicensePlate = "Н456РС163", Color = "Blue", ModelGenerationId = 7, ModelGeneration = ModelGenerations[6] },
-        new Car { Id = 8, LicensePlate = "О789ТУ163", Color = "Brown", ModelGenerationId = 8, ModelGeneration = ModelGenerations[7] },
-        new Car { Id = 9, LicensePlate = "Р321ХО163", Color = "White", ModelGenerationId = 9, ModelGeneration = ModelGenerations[8] },
-        new Car { Id = 10, LicensePlate = "С654АМ163", Color = "Black", ModelGenerationId = 10, ModelGeneration = ModelGenerations[9] },
-        new Car { Id = 11, LicensePlate = "Т987РЕ163", Color = "Orange", ModelGenerationId = 11, ModelGeneration = ModelGenerations[10] },
-        new Car { Id = 12, LicensePlate = "У246КН163", Color = "White", ModelGenerationId = 12, ModelGeneration = ModelGenerations[11] },
-        new Car { Id = 13, LicensePlate = "Х135ВТ163", Color = "Black", ModelGenerationId = 13, ModelGeneration = ModelGenerations[12] },
-        new Car { Id = 14, LicensePlate = "Ш579СА163", Color = "Gray", ModelGenerationId = 14, ModelGeneration = ModelGenerations[13] },
-        new Car { Id = 15, LicensePlate = "Щ864РО163", Color = "Blue", ModelGenerationId = 15, ModelGeneration = ModelGenerations[14] }
+        new Car { Id = 1, LicensePlate = "A001AA163", Color = "Black", ModelGenerationId = 1, ModelGeneration = ModelGenerations[0] },
+        new Car { Id = 2, LicensePlate = "B777BC163", Color = "Red", ModelGenerationId = 2, ModelGeneration = ModelGenerations[1] },
+        new Car { Id = 3, LicensePlate = "C123ET163", Color = "White", ModelGenerationId = 3, ModelGeneration = ModelGenerations[2] },
+        new Car { Id = 4, LicensePlate = "E555KH163", Color = "Green", ModelGenerationId = 4, ModelGeneration = ModelGenerations[3] },
+        new Car { Id = 5, LicensePlate = "K234MR163", Color = "Silver", ModelGenerationId = 5, ModelGeneration = ModelGenerations[4] },
+        new Car { Id = 6, LicensePlate = "M888OA163", Color = "Gray", ModelGenerationId = 6, ModelGeneration = ModelGenerations[5] },
+        new Car { Id = 7, LicensePlate = "N456RS163", Color = "Blue", ModelGenerationId = 7, ModelGeneration = ModelGenerations[6] },
+        new Car { Id = 8, LicensePlate = "O789TU163", Color = "Brown", ModelGenerationId = 8, ModelGeneration = ModelGenerations[7] },
+        new Car { Id = 9, LicensePlate = "P321XO163", Color = "White", ModelGenerationId = 9, ModelGeneration = ModelGenerations[8] },
+        new Car { Id = 10, LicensePlate = "S654AM163", Color = "Black", ModelGenerationId = 10, ModelGeneration = ModelGenerations[9] },
+        new Car { Id = 11, LicensePlate = "T987RE163", Color = "Orange", ModelGenerationId = 11, ModelGeneration = ModelGenerations[10] },
+        new Car { Id = 12, LicensePlate = "U246KN163", Color = "White", ModelGenerationId = 12, ModelGeneration = ModelGenerations[11] },
+        new Car { Id = 13, LicensePlate = "H135VT163", Color = "Black", ModelGenerationId = 13, ModelGeneration = ModelGenerations[12] },
+        new Car { Id = 14, LicensePlate = "SH579SA163", Color = "Gray", ModelGenerationId = 14, ModelGeneration = ModelGenerations[13] },
+        new Car { Id = 15, LicensePlate = "SCH864RO163", Color = "Blue", ModelGenerationId = 15, ModelGeneration = ModelGenerations[14] }
     };
 
     /// <summary>
@@ -109,8 +109,8 @@ public static class TestData
             ClientId = 1,
             RentalDate = new DateTime(2024, 3, 1, 10, 0, 0),
             RentalHours = 48,
-            Car = Cars[6],  // Индекс 6 = Car с Id=7 (Lada Vesta)
-            Client = Clients[0] // Индекс 0 = Client с Id=1
+            Car = Cars[6],  
+            Client = Clients[0] 
         },
         new Rental
         {
@@ -120,7 +120,7 @@ public static class TestData
             RentalDate = new DateTime(2024, 2, 25, 14, 30, 0),
             RentalHours = 72,
             Car = Cars[6],
-            Client = Clients[2] // Индекс 2 = Client с Id=3
+            Client = Clients[2]
         },
         new Rental
         {
@@ -130,7 +130,7 @@ public static class TestData
             RentalDate = new DateTime(2024, 2, 20, 9, 15, 0),
             RentalHours = 24,
             Car = Cars[6],
-            Client = Clients[4] // Индекс 4 = Client с Id=5
+            Client = Clients[4]
         },
         new Rental
         {

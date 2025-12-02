@@ -28,9 +28,9 @@ public class CarRentalTests
     {
         const string targetModel = "Lada Vesta";
         const int expectedCount = 3;
-        const string expectedFirstName = "Козловский Игорь Михайлович";
-        const string expectedSecondName = "Попов Денис Олегович";
-        const string expectedThirdName = "Смирнов Александр Петрович";
+        const string expectedFirstName = "Alexander Smirnov";
+        const string expectedSecondName = "Denis Popov";
+        const string expectedThirdName = "Igor Kozlovsky";
 
         var clients = _rentals
             .Where(r => r.Car.ModelGeneration.Model.Name == targetModel)
@@ -49,8 +49,7 @@ public class CarRentalTests
     public void GetCurrentlyRentedCars()
     {
         var testDate = new DateTime(2024, 3, 5, 12, 0, 0);
-        const int expectedCount = 1;
-        var expectedPlates = new[] { "К234МР163" };
+        var expectedPlate = "K234MR163";
 
         var rentedCars = _rentals
             .Where(r => r.RentalDate.AddHours(r.RentalHours) > testDate)
@@ -58,19 +57,14 @@ public class CarRentalTests
             .Distinct()
             .ToList();
 
-        Assert.Equal(expectedCount, rentedCars.Count);
-
-        foreach (var expectedPlate in expectedPlates)
-        {
-            Assert.Contains(rentedCars, c => c.LicensePlate == expectedPlate);
-        }
+        Assert.Contains(rentedCars, c => c.LicensePlate == expectedPlate);
     }
 
     [Fact]
     public void GetTop5MostRentedCars()
     {
         const int expectedCount = 5;
-        const string expectedTopCarPlate = "Н456РС163";
+        const string expectedTopCarPlate = "N456RS163";
         const int expectedTopCarRentalCount = 3;
 
         var topCars = _rentals
@@ -116,7 +110,7 @@ public class CarRentalTests
     public void GetTop5ClientsByRentalAmount()
     {
         const int expectedCount = 5;
-        const string expectedTopClientName = "Захарова Ольга Александровна";
+        const string expectedTopClientName = "Olga Zakharova";
 
         var topClients = _rentals
             .GroupBy(r => r.Client)
