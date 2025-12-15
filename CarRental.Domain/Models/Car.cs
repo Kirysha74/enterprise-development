@@ -1,32 +1,32 @@
 namespace CarRental.Domain.Models;
 
 /// <summary>
-/// Автомобиль в парке проката
+/// Car in the rental fleet
 /// </summary>
 public class Car
 {
     /// <summary>
-    /// Уникальный идентификатор автомобиля
+    /// Unique car identifier
     /// </summary>
     public int Id { get; set; }
 
     /// <summary>
-    /// Государственный номерной знак
+    /// License plate number
     /// </summary>
     public required string LicensePlate { get; set; }
 
     /// <summary>
-    /// Цвет автомобиля
+    /// Car color
     /// </summary>
     public required string Color { get; set; }
 
     /// <summary>
-    /// Идентификатор поколения модели
+    /// Model generation identifier
     /// </summary>
     public required int ModelGenerationId { get; set; }
 
     /// <summary>
-    /// Поколение модели автомобиля
+    /// Car model generation
     /// </summary>
     public required ModelGeneration ModelGeneration { get; set; }
 }

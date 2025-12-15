@@ -1,42 +1,42 @@
 namespace CarRental.Domain.Models;
 
 /// <summary>
-/// Поколение модели автомобиля с техническими характеристиками
+/// Car model generation with technical specifications
 /// </summary>
 public class ModelGeneration
 {
     /// <summary>
-    /// Уникальный идентификатор поколения
+    /// Unique generation identifier
     /// </summary>
     public required int Id { get; set; }
 
     /// <summary>
-    /// Год выпуска поколения
+    /// Generation release year
     /// </summary>
     public required int Year { get; set; }
 
     /// <summary>
-    /// Объем двигателя в литрах
+    /// Engine volume in liters
     /// </summary>
     public required double EngineVolume { get; set; }
 
     /// <summary>
-    /// Тип коробки передач
+    /// Transmission type
     /// </summary>
     public required string Transmission { get; set; }
 
     /// <summary>
-    /// Стоимость аренды в час
+    /// Rental cost per hour
     /// </summary>
     public required decimal RentalPricePerHour { get; set; }
 
     /// <summary>
-    /// Идентификатор модели автомобиля
+    /// Car model identifier
     /// </summary>
     public required int ModelId { get; set; }
 
     /// <summary>
-    /// Модель автомобиля
+    /// Car model
     /// </summary>
     public required CarModel Model { get; set; }
 }

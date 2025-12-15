@@ -6,25 +6,11 @@ using System.Linq;
 
 namespace CarRental.Tests;
 
-public class CarRentalTests
+public class CarRentalTests(TestData fixture) : IClassFixture<TestData>
 {
-    private readonly List<CarModel> _models;
-    private readonly List<ModelGeneration> _generations;
-    private readonly List<Car> _cars;
-    private readonly List<Client> _clients;
-    private readonly List<Rental> _rentals;
-
-    public CarRentalTests()
-    {
-        _models = TestData.CarModels;
-        _generations = TestData.ModelGenerations;
-        _cars = TestData.Cars;
-        _clients = TestData.Clients;
-        _rentals = TestData.Rentals;
-    }
 
     [Fact]
-    public void GetClientsByModel_SortedByName()
+    public void GetClientsByModelSortedByName()
     {
         const string targetModel = "Lada Vesta";
         const int expectedCount = 3;
@@ -32,7 +18,7 @@ public class CarRentalTests
         const string expectedSecondName = "Denis Popov";
         const string expectedThirdName = "Igor Kozlovsky";
 
-        var clients = _rentals
+        var clients = fixture.Rentals
             .Where(r => r.Car.ModelGeneration.Model.Name == targetModel)
             .Select(r => r.Client)
             .Distinct()
@@ -51,7 +37,7 @@ public class CarRentalTests
         var testDate = new DateTime(2024, 3, 5, 12, 0, 0);
         var expectedPlate = "K234MR163";
 
-        var rentedCars = _rentals
+        var rentedCars = fixture.Rentals
             .Where(r => r.RentalDate.AddHours(r.RentalHours) > testDate)
             .Select(r => r.Car)
             .Distinct()
@@ -67,7 +53,7 @@ public class CarRentalTests
         const string expectedTopCarPlate = "N456RS163";
         const int expectedTopCarRentalCount = 3;
 
-        var topCars = _rentals
+        var topCars = fixture.Rentals
             .GroupBy(r => r.Car)
             .Select(g => new { Car = g.Key, RentalCount = g.Count() })
             .OrderByDescending(x => x.RentalCount)
@@ -85,21 +71,21 @@ public class CarRentalTests
         const int expectedTotalCars = 15;
         const int expectedLadaVestaRentalCount = 3;
         const int expectedBmwRentalCount = 2;
-        const int carIdWithThreeRentals = 7;
-        const int carIdWithTwoRentals = 1;
+        const int ladaVestaCarId = 7;
+        const int bmwCarId = 1;
 
-        var carsWithRentalCount = _cars
+        var carsWithRentalCount = fixture.Cars
             .Select(car => new
             {
                 Car = car,
-                RentalCount = _rentals.Count(r => r.CarId == car.Id)
+                RentalCount = fixture.Rentals.Count(r => r.CarId == car.Id)
             })
             .ToList();
 
         Assert.Equal(expectedTotalCars, carsWithRentalCount.Count);
 
-        var ladaVesta = carsWithRentalCount.First(c => c.Car.Id == carIdWithThreeRentals);
-        var bmw = carsWithRentalCount.First(c => c.Car.Id == carIdWithTwoRentals);
+        var ladaVesta = carsWithRentalCount.First(c => c.Car.Id == ladaVestaCarId);
+        var bmw = carsWithRentalCount.First(c => c.Car.Id == bmwCarId);
 
         Assert.Equal(expectedLadaVestaRentalCount, ladaVesta.RentalCount);
         Assert.Equal(expectedBmwRentalCount, bmw.RentalCount);
@@ -112,7 +98,7 @@ public class CarRentalTests
         const int expectedCount = 5;
         const string expectedTopClientName = "Olga Zakharova";
 
-        var topClients = _rentals
+        var topClients = fixture.Rentals
             .GroupBy(r => r.Client)
             .Select(g => new
             {

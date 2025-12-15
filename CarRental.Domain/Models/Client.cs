@@ -1,27 +1,27 @@
 namespace CarRental.Domain.Models;
 
 /// <summary>
-/// Клиент службы проката автомобилей
+/// Car rental service client
 /// </summary>
 public class Client
 {
     /// <summary>
-    /// Уникальный идентификатор клиента
+    /// Unique client identifier
     /// </summary>
     public int Id { get; set; }
 
     /// <summary>
-    /// Номер водительского удостоверения
+    /// Driver's license number
     /// </summary>
     public required string LicenseNumber { get; set; }
 
     /// <summary>
-    /// Полное имя клиента
+    /// Client's full name
     /// </summary>
     public required string FullName { get; set; }
 
     /// <summary>
-    /// Дата рождения клиента
+    /// Client's date of birth
     /// </summary>
     public required DateOnly BirthDate { get; set; }
 }
