@@ -37,8 +37,8 @@ public class TestData
     /// </summary>
     public TestData()
     {
-        CarModels = new()
-        {
+        CarModels = 
+        [
             new()
             {
                 Id = 1,
@@ -174,10 +174,10 @@ public class TestData
                 BodyType = "SUV",
                 Class = "Off-road"
             }
-        };
+        ];
 
-        Clients = new()
-        {
+        Clients = 
+        [
             new()
             {
                 Id = 1,
@@ -283,10 +283,10 @@ public class TestData
                 FullName = "Andrey Davydov",
                 BirthDate = new DateOnly(1998, 11, 15)
             }
-        };
+        ];
 
-        ModelGenerations = new()
-        {
+        ModelGenerations = 
+        [
             new()
             {
                 Id = 1,
@@ -437,10 +437,10 @@ public class TestData
                 ModelId = 15,
                 Model = CarModels[14]
             }
-        };
+        ];
 
-        Cars = new()
-        {
+        Cars = 
+        [
             new()
             {
                 Id = 1,
@@ -561,10 +561,10 @@ public class TestData
                 ModelGenerationId = 15,
                 ModelGeneration = ModelGenerations[14]
             }
-        };
+        ];
 
-        Rentals = new()
-        {
+        Rentals = 
+        [
             new()
             {
                 Id = 1,
@@ -755,6 +755,6 @@ public class TestData
                 Car = Cars[14],
                 Client = Clients[3]
             }
-        };
+        ];
     }
 }

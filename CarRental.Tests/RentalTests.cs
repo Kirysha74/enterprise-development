@@ -1,8 +1,4 @@
-﻿using Xunit;
-using CarRental.Domain.Data;
-using CarRental.Domain.Models;
-using System.Collections.Generic;
-using System.Linq;
+﻿using CarRental.Domain.Data;
 
 namespace CarRental.Tests;
 
