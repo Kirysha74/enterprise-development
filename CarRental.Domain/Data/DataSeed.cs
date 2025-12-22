@@ -1,4 +1,4 @@
-using CarRental.Domain.Models;
+using CarRental.Domain.Entities;
 
 namespace CarRental.Domain.Data;
 
