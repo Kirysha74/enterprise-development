@@ -3,6 +3,7 @@ using CarRental.Application.Contracts.Dto;
 using CarRental.Domain.Entities;
 using CarRental.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarRental.Api.Controllers;
 
@@ -25,7 +26,12 @@ public class RentalsController(
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<RentalGetDto>>> GetAll()
     {
-        var entities = await repo.GetAllAsync();
+        var entities = await repo.GetAllAsync(
+            include: query => query
+                .Include(r => r.Car)
+                    .ThenInclude(c => c.ModelGeneration)
+                        .ThenInclude(mg => mg.Model)
+                .Include(r => r.Client));
         var dtos = mapper.Map<IEnumerable<RentalGetDto>>(entities);
         return Ok(dtos);
     }
@@ -40,7 +46,12 @@ public class RentalsController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<RentalGetDto>> Get(int id)
     {
-        var entity = await repo.GetByIdAsync(id);
+        var entity = await repo.GetByIdAsync(id,
+            include: query => query
+                .Include(r => r.Car)
+                    .ThenInclude(c => c.ModelGeneration)
+                           .ThenInclude(mg => mg.Model)
+                .Include(r => r.Client));
         if (entity == null) return NotFound();
         var dto = mapper.Map<RentalGetDto>(entity);
         return Ok(dto);
@@ -66,7 +77,15 @@ public class RentalsController(
 
         var entity = mapper.Map<Rental>(dto);
         var created = await repo.AddAsync(entity);
-        var resultDto = mapper.Map<RentalGetDto>(created);
+
+        var rentalWithIncludes = await repo.GetByIdAsync(created.Id,
+            include: query => query
+                .Include(r => r.Car)
+                    .ThenInclude(c => c.ModelGeneration)
+                        .ThenInclude(mg => mg.Model)
+                .Include(r => r.Client));
+        var resultDto = mapper.Map<RentalGetDto>(rentalWithIncludes);
+
         return CreatedAtAction(nameof(Get), new { id = resultDto.Id }, resultDto);
     }
 
@@ -95,7 +114,15 @@ public class RentalsController(
 
         mapper.Map(dto, entity);
         await repo.UpdateAsync(entity);
-        var resultDto = mapper.Map<RentalGetDto>(entity);
+
+        var updatedWithIncludes = await repo.GetByIdAsync(entity.Id,
+            include: query => query
+                .Include(r => r.Car)
+                    .ThenInclude(c => c.ModelGeneration)
+                        .ThenInclude(mg => mg.Model)
+                .Include(r => r.Client));
+        var resultDto = mapper.Map<RentalGetDto>(updatedWithIncludes);
+
         return Ok(resultDto);
     }
 

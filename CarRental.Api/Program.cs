@@ -21,16 +21,23 @@ builder.Services.AddSwaggerGen(c =>
 {
     var basePath = AppContext.BaseDirectory;
 
-    var xmlApi = Path.Combine(basePath, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
-    c.IncludeXmlComments(xmlApi, includeControllerXmlComments: true);
+    var xmlApiPath = Path.Combine(basePath, "CarRental.Api.xml");
+    if (File.Exists(xmlApiPath))
+    {
+        c.IncludeXmlComments(xmlApiPath, includeControllerXmlComments: true);
+    }
 
-    var xmlContracts = Path.Combine(basePath, "../CarRental.Application.Contracts/CarRental.Application.Contracts.xml");
-    if (File.Exists(xmlContracts))
-        c.IncludeXmlComments(xmlContracts);
+    var xmlContractsPath = Path.Combine(basePath, "CarRental.Application.Contracts.xml");
+    if (File.Exists(xmlContractsPath))
+    {
+        c.IncludeXmlComments(xmlContractsPath);
+    }
 
-    var xmlDomain = Path.Combine(basePath, "../CarRental.Domain/CarRental.Domain.xml");
-    if (File.Exists(xmlDomain))
-        c.IncludeXmlComments(xmlDomain);
+    var xmlDomainPath = Path.Combine(basePath, "CarRental.Domain.xml");
+    if (File.Exists(xmlDomainPath))
+    {
+        c.IncludeXmlComments(xmlDomainPath);
+    }
 });
 
 builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());

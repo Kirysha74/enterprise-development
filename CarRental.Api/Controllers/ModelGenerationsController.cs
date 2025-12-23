@@ -3,6 +3,7 @@ using CarRental.Application.Contracts.Dto;
 using CarRental.Domain.Entities;
 using CarRental.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarRental.Api.Controllers;
 
@@ -24,7 +25,8 @@ public class ModelGenerationsController(
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<ModelGenerationGetDto>>> GetAll()
     {
-        var entities = await repo.GetAllAsync();
+        var entities = await repo.GetAllAsync(
+            include: query => query.Include(mg => mg.Model));
         var dtos = mapper.Map<IEnumerable<ModelGenerationGetDto>>(entities);
         return Ok(dtos);
     }
@@ -39,7 +41,8 @@ public class ModelGenerationsController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ModelGenerationGetDto>> Get(int id)
     {
-        var entity = await repo.GetByIdAsync(id);
+        var entity = await repo.GetByIdAsync(id,
+            include: query => query.Include(mg => mg.Model));
         if (entity == null) return NotFound();
         var dto = mapper.Map<ModelGenerationGetDto>(entity);
         return Ok(dto);
@@ -61,7 +64,12 @@ public class ModelGenerationsController(
 
         var entity = mapper.Map<ModelGeneration>(dto);
         var created = await repo.AddAsync(entity);
-        var resultDto = mapper.Map<ModelGenerationGetDto>(created);
+
+        // Загружаем связанные данные для DTO
+        var generationWithIncludes = await repo.GetByIdAsync(created.Id,
+            include: query => query.Include(mg => mg.Model));
+        var resultDto = mapper.Map<ModelGenerationGetDto>(generationWithIncludes);
+
         return CreatedAtAction(nameof(Get), new { id = resultDto.Id }, resultDto);
     }
 
@@ -86,7 +94,12 @@ public class ModelGenerationsController(
 
         mapper.Map(dto, entity);
         await repo.UpdateAsync(entity);
-        var resultDto = mapper.Map<ModelGenerationGetDto>(entity);
+
+        // Загружаем связанные данные для DTO
+        var updatedWithIncludes = await repo.GetByIdAsync(entity.Id,
+            include: query => query.Include(mg => mg.Model));
+        var resultDto = mapper.Map<ModelGenerationGetDto>(updatedWithIncludes);
+
         return Ok(resultDto);
     }
 

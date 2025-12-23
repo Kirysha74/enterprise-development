@@ -4,7 +4,6 @@ namespace CarRental.Tests;
 
 public class CarRentalTests(TestData fixture) : IClassFixture<TestData>
 {
-
     [Fact]
     public void GetClientsByModelSortedByName()
     {
@@ -15,16 +14,17 @@ public class CarRentalTests(TestData fixture) : IClassFixture<TestData>
         const string expectedThirdName = "Igor Kozlovsky";
 
         var clients = fixture.Rentals
-            .Where(r => r.Car.ModelGeneration.Model.Name == targetModel)
+            .Where(r => r.Car?.ModelGeneration?.Model?.Name == targetModel)
             .Select(r => r.Client)
+            .Where(client => client != null)
             .Distinct()
-            .OrderBy(c => c.FullName)
+            .OrderBy(c => c!.FullName)
             .ToList();
 
         Assert.Equal(expectedCount, clients.Count);
-        Assert.Equal(expectedFirstName, clients[0].FullName);
-        Assert.Equal(expectedSecondName, clients[1].FullName);
-        Assert.Equal(expectedThirdName, clients[2].FullName);
+        Assert.Equal(expectedFirstName, clients[0]?.FullName);
+        Assert.Equal(expectedSecondName, clients[1]?.FullName);
+        Assert.Equal(expectedThirdName, clients[2]?.FullName);
     }
 
     [Fact]
@@ -34,12 +34,13 @@ public class CarRentalTests(TestData fixture) : IClassFixture<TestData>
         var expectedPlate = "K234MR163";
 
         var rentedCars = fixture.Rentals
-            .Where(r => r.RentalDate.AddHours(r.RentalHours) > testDate)
+            .Where(r => r.Car != null && r.RentalDate.AddHours(r.RentalHours) > testDate)
             .Select(r => r.Car)
+            .Where(car => car != null)
             .Distinct()
             .ToList();
 
-        Assert.Contains(rentedCars, c => c.LicensePlate == expectedPlate);
+        Assert.Contains(rentedCars, c => c?.LicensePlate == expectedPlate);
     }
 
     [Fact]
@@ -50,14 +51,16 @@ public class CarRentalTests(TestData fixture) : IClassFixture<TestData>
         const int expectedTopCarRentalCount = 3;
 
         var topCars = fixture.Rentals
+            .Where(r => r.Car != null)
             .GroupBy(r => r.Car)
             .Select(g => new { Car = g.Key, RentalCount = g.Count() })
+            .Where(x => x.Car != null)
             .OrderByDescending(x => x.RentalCount)
             .Take(5)
             .ToList();
 
         Assert.Equal(expectedCount, topCars.Count);
-        Assert.Equal(expectedTopCarPlate, topCars[0].Car.LicensePlate);
+        Assert.Equal(expectedTopCarPlate, topCars[0].Car?.LicensePlate);
         Assert.Equal(expectedTopCarRentalCount, topCars[0].RentalCount);
     }
 
@@ -71,6 +74,7 @@ public class CarRentalTests(TestData fixture) : IClassFixture<TestData>
         const int bmwCarId = 1;
 
         var carsWithRentalCount = fixture.Cars
+            .Where(car => car != null)
             .Select(car => new
             {
                 Car = car,
@@ -95,17 +99,20 @@ public class CarRentalTests(TestData fixture) : IClassFixture<TestData>
         const string expectedTopClientName = "Olga Zakharova";
 
         var topClients = fixture.Rentals
-            .GroupBy(r => r.Client)
-            .Select(g => new
+            .Where(r => r.Client != null && r.Car?.ModelGeneration != null)
+            .Select(r => new
             {
-                Client = g.Key,
-                TotalAmount = g.Sum(r => r.RentalHours * r.Car.ModelGeneration.RentalPricePerHour)
+                Client = r.Client,
+                Amount = r.RentalHours * r.Car!.ModelGeneration!.RentalPricePerHour
             })
+            .GroupBy(x => x.Client)
+            .Select(g => new { Client = g.Key, TotalAmount = g.Sum(x => x.Amount) })
+            .Where(x => x.Client != null)
             .OrderByDescending(x => x.TotalAmount)
             .Take(5)
             .ToList();
 
         Assert.Equal(expectedCount, topClients.Count);
-        Assert.Equal(expectedTopClientName, topClients[0].Client.FullName);
+        Assert.Equal(expectedTopClientName, topClients[0].Client?.FullName);
     }
 }
