@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CarRental.Api.Controllers;
 
+/// <summary>
+/// Controller for managing rentals
+/// </summary>
 [ApiController]
 [Route("api/rentals")]
 public class RentalsController(
@@ -14,6 +17,10 @@ public class RentalsController(
     IRepository<Client> clientRepo,
     IMapper mapper) : ControllerBase
 {
+    /// <summary>
+    /// Get all rentals
+    /// </summary>
+    /// <returns>List of all rentals</returns>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<RentalGetDto>>> GetAll()
@@ -23,6 +30,11 @@ public class RentalsController(
         return Ok(dtos);
     }
 
+    /// <summary>
+    /// Get rental by ID
+    /// </summary>
+    /// <param name="id">Rental identifier</param>
+    /// <returns>Rental</returns>
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -34,6 +46,11 @@ public class RentalsController(
         return Ok(dto);
     }
 
+    /// <summary>
+    /// Create new rental
+    /// </summary>
+    /// <param name="dto">Rental creation data</param>
+    /// <returns>Created rental</returns>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -53,6 +70,12 @@ public class RentalsController(
         return CreatedAtAction(nameof(Get), new { id = resultDto.Id }, resultDto);
     }
 
+    /// <summary>
+    /// Update existing rental
+    /// </summary>
+    /// <param name="id">Rental identifier</param>
+    /// <param name="dto">Updated rental data</param>
+    /// <returns>Updated rental</returns>
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -76,6 +99,10 @@ public class RentalsController(
         return Ok(resultDto);
     }
 
+    /// <summary>
+    /// Delete rental
+    /// </summary>
+    /// <param name="id">Rental identifier</param>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<ActionResult> Delete(int id)

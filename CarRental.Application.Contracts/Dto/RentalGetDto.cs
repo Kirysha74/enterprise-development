@@ -1,9 +1,12 @@
 namespace CarRental.Application.Contracts.Dto;
 
+/// <summary>
+/// DTO for retrieving rental information
+/// </summary>
 public record RentalGetDto(
     int Id,
     DateTime RentalDate,
     int RentalHours,
-    int CarId,
-    int ClientId
+    CarGetDto Car,
+    ClientGetDto Client
 );

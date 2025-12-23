@@ -8,7 +8,10 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<Car, CarGetDto>();
+        CreateMap<Car, CarGetDto>()
+            .ForMember(dest => dest.ModelGeneration,
+                       opt => opt.MapFrom(src => src.ModelGeneration));
+
         CreateMap<CarEditDto, Car>();
 
         CreateMap<Client, ClientGetDto>();
@@ -17,10 +20,16 @@ public class MappingProfile : Profile
         CreateMap<CarModel, CarModelGetDto>();
         CreateMap<CarModelEditDto, CarModel>();
 
-        CreateMap<ModelGeneration, ModelGenerationGetDto>();
+        CreateMap<ModelGeneration, ModelGenerationGetDto>()
+            .ForMember(dest => dest.Model,
+                       opt => opt.MapFrom(src => src.Model));
         CreateMap<ModelGenerationEditDto, ModelGeneration>();
 
-        CreateMap<Rental, RentalGetDto>();
+        CreateMap<Rental, RentalGetDto>()
+            .ForMember(dest => dest.Car,
+                       opt => opt.MapFrom(src => src.Car))
+            .ForMember(dest => dest.Client,
+                       opt => opt.MapFrom(src => src.Client));
         CreateMap<RentalEditDto, Rental>();
     }
 }

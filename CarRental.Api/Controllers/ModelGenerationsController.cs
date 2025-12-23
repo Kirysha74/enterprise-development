@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CarRental.Api.Controllers;
 
+/// <summary>
+/// Controller for managing model generations
+/// </summary>
 [ApiController]
 [Route("api/model-generations")]
 public class ModelGenerationsController(
@@ -13,6 +16,10 @@ public class ModelGenerationsController(
     IRepository<CarModel> carModelRepo,
     IMapper mapper) : ControllerBase
 {
+    /// <summary>
+    /// Get all model generations
+    /// </summary>
+    /// <returns>List of all model generations</returns>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<ModelGenerationGetDto>>> GetAll()
@@ -22,6 +29,11 @@ public class ModelGenerationsController(
         return Ok(dtos);
     }
 
+    /// <summary>
+    /// Get model generation by ID
+    /// </summary>
+    /// <param name="id">Generation identifier</param>
+    /// <returns>Model generation</returns>
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -33,6 +45,11 @@ public class ModelGenerationsController(
         return Ok(dto);
     }
 
+    /// <summary>
+    /// Create new model generation
+    /// </summary>
+    /// <param name="dto">Generation creation data</param>
+    /// <returns>Created model generation</returns>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -48,6 +65,12 @@ public class ModelGenerationsController(
         return CreatedAtAction(nameof(Get), new { id = resultDto.Id }, resultDto);
     }
 
+    /// <summary>
+    /// Update existing model generation
+    /// </summary>
+    /// <param name="id">Generation identifier</param>
+    /// <param name="dto">Updated generation data</param>
+    /// <returns>Updated model generation</returns>
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -67,6 +90,10 @@ public class ModelGenerationsController(
         return Ok(resultDto);
     }
 
+    /// <summary>
+    /// Delete model generation
+    /// </summary>
+    /// <param name="id">Generation identifier</param>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<ActionResult> Delete(int id)
