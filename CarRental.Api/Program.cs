@@ -6,6 +6,9 @@ using CarRental.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.Text.Json.Serialization;
+using CarRental.Api;
+using Confluent.Kafka;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +44,34 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
+
+builder.Services.AddOptions<KafkaOptions>()
+    .Bind(builder.Configuration.GetSection("Kafka"));
+
+builder.Services.AddHostedService<KafkaConsumerWorker>();
+
+builder.Services.AddSingleton(sp =>
+{
+    var config = sp.GetRequiredService<IConfiguration>();
+    var kafkaOptions = sp.GetRequiredService<IOptions<KafkaOptions>>().Value;
+
+    var kafkaConnection = config.GetConnectionString("KafkaConnection")
+        ?? throw new InvalidOperationException("KafkaConnection string is missing");
+
+    var consumerConfig = new ConsumerConfig
+    {
+        BootstrapServers = kafkaConnection,
+        GroupId = kafkaOptions.GroupId,
+        AutoOffsetReset = AutoOffsetReset.Earliest,
+        EnableAutoCommit = false,
+        FetchMinBytes = kafkaOptions.FetchMinBytes,
+        EnableAutoOffsetStore = false,
+        SessionTimeoutMs = 45000,
+        MaxPollIntervalMs = 300000
+    };
+
+    return new ConsumerBuilder<Ignore, string>(consumerConfig).Build();
+});
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
