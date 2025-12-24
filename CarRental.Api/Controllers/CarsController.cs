@@ -17,10 +17,6 @@ public class CarsController(
     IRepository<ModelGeneration> modelGenerationRepo,
     IMapper mapper) : ControllerBase
 {
-    /// <summary>
-    /// Get all cars
-    /// </summary>
-    /// <returns>List of all cars</returns>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<CarGetDto>>> GetAll()
@@ -28,7 +24,7 @@ public class CarsController(
         var entities = await repo.GetAllAsync(
             include: query => query
                 .Include(c => c.ModelGeneration)
-                    .ThenInclude(mg => mg.Model));
+                    .ThenInclude(mg => mg!.Model));
         var dtos = mapper.Map<IEnumerable<CarGetDto>>(entities);
         return Ok(dtos);
     }
@@ -46,7 +42,7 @@ public class CarsController(
         var entity = await repo.GetByIdAsync(id,
             include: query => query
                 .Include(c => c.ModelGeneration)
-                    .ThenInclude(mg => mg.Model));
+                    .ThenInclude(mg => mg!.Model));
         if (entity == null) return NotFound();
         var dto = mapper.Map<CarGetDto>(entity);
         return Ok(dto);
@@ -69,13 +65,15 @@ public class CarsController(
         var entity = mapper.Map<Car>(dto);
         var created = await repo.AddAsync(entity);
 
-        // Загружаем связанные данные для DTO
         var carWithIncludes = await repo.GetByIdAsync(created.Id,
             include: query => query
                 .Include(c => c.ModelGeneration)
-                    .ThenInclude(mg => mg.Model));
-        var resultDto = mapper.Map<CarGetDto>(carWithIncludes);
+                    .ThenInclude(mg => mg!.Model));
 
+        if (carWithIncludes == null)
+            return BadRequest("Failed to retrieve created car.");
+
+        var resultDto = mapper.Map<CarGetDto>(carWithIncludes);
         return CreatedAtAction(nameof(Get), new { id = resultDto.Id }, resultDto);
     }
 
@@ -104,9 +102,12 @@ public class CarsController(
         var updatedWithIncludes = await repo.GetByIdAsync(entity.Id,
             include: query => query
                 .Include(c => c.ModelGeneration)
-                    .ThenInclude(mg => mg.Model));
-        var resultDto = mapper.Map<CarGetDto>(updatedWithIncludes);
+                    .ThenInclude(mg => mg!.Model));
 
+        if (updatedWithIncludes == null)
+            return BadRequest("Failed to retrieve updated car.");
+
+        var resultDto = mapper.Map<CarGetDto>(updatedWithIncludes);
         return Ok(resultDto);
     }
 

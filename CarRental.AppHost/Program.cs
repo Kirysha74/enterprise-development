@@ -12,9 +12,6 @@ var produceDelayParam = builder.AddParameter("KafkaProduceDelayMs", kafkaProduce
 var fetchMinBytesParam = builder.AddParameter("KafkaFetchMinBytes", fetchMinBytes);
 
 var mysql = builder.AddMySql("mysql")
-    .WithEnvironment("MYSQL_ROOT_HOST", "%")
-    .WithVolume("mysql-data", "/var/lib/mysql")
-    .WithImage("mysql", "8.0")
     .AddDatabase("CarRentalDb");
 
 var kafka = builder.AddKafka("Kafka")

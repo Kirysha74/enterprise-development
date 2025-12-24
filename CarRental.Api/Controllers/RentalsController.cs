@@ -29,8 +29,8 @@ public class RentalsController(
         var entities = await repo.GetAllAsync(
             include: query => query
                 .Include(r => r.Car)
-                    .ThenInclude(c => c.ModelGeneration)
-                        .ThenInclude(mg => mg.Model)
+                    .ThenInclude(c => c!.ModelGeneration)
+                        .ThenInclude(mg => mg!.Model)
                 .Include(r => r.Client));
         var dtos = mapper.Map<IEnumerable<RentalGetDto>>(entities);
         return Ok(dtos);
@@ -49,8 +49,8 @@ public class RentalsController(
         var entity = await repo.GetByIdAsync(id,
             include: query => query
                 .Include(r => r.Car)
-                    .ThenInclude(c => c.ModelGeneration)
-                           .ThenInclude(mg => mg.Model)
+                    .ThenInclude(c => c!.ModelGeneration)
+                        .ThenInclude(mg => mg!.Model)
                 .Include(r => r.Client));
         if (entity == null) return NotFound();
         var dto = mapper.Map<RentalGetDto>(entity);
@@ -81,11 +81,14 @@ public class RentalsController(
         var rentalWithIncludes = await repo.GetByIdAsync(created.Id,
             include: query => query
                 .Include(r => r.Car)
-                    .ThenInclude(c => c.ModelGeneration)
-                        .ThenInclude(mg => mg.Model)
+                    .ThenInclude(c => c!.ModelGeneration)
+                        .ThenInclude(mg => mg!.Model)
                 .Include(r => r.Client));
-        var resultDto = mapper.Map<RentalGetDto>(rentalWithIncludes);
 
+        if (rentalWithIncludes == null)
+            return BadRequest("Failed to retrieve created rental.");
+
+        var resultDto = mapper.Map<RentalGetDto>(rentalWithIncludes);
         return CreatedAtAction(nameof(Get), new { id = resultDto.Id }, resultDto);
     }
 
@@ -118,11 +121,14 @@ public class RentalsController(
         var updatedWithIncludes = await repo.GetByIdAsync(entity.Id,
             include: query => query
                 .Include(r => r.Car)
-                    .ThenInclude(c => c.ModelGeneration)
-                        .ThenInclude(mg => mg.Model)
+                    .ThenInclude(c => c!.ModelGeneration)
+                        .ThenInclude(mg => mg!.Model)
                 .Include(r => r.Client));
-        var resultDto = mapper.Map<RentalGetDto>(updatedWithIncludes);
 
+        if (updatedWithIncludes == null)
+            return BadRequest("Failed to retrieve updated rental.");
+
+        var resultDto = mapper.Map<RentalGetDto>(updatedWithIncludes);
         return Ok(resultDto);
     }
 

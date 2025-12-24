@@ -17,11 +17,6 @@ public class AnalyticsController(
     IRepository<Car> carsRepo,
     IMapper mapper) : ControllerBase
 {
-    /// <summary>
-    /// Get clients who rented cars of specified model, sorted by name
-    /// </summary>
-    /// <param name="modelName">Car model name</param>
-    /// <returns>List of clients</returns>
     [HttpGet("clients-by-model")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<ClientGetDto>>> GetClientsByModelSortedByName(
@@ -30,19 +25,24 @@ public class AnalyticsController(
         var rentalsQuery = rentalsRepo.GetQueryable(
             include: query => query
                 .Include(r => r.Car)
-                    .ThenInclude(c => c.ModelGeneration)
-                        .ThenInclude(mg => mg.Model)
+                    .ThenInclude(c => c!.ModelGeneration)
+                        .ThenInclude(mg => mg!.Model)
                 .Include(r => r.Client));
 
         var clients = await rentalsQuery
-            .Where(r => r.Car.ModelGeneration.Model.Name == modelName)
+            .Where(r => r.Car != null &&
+                       r.Car.ModelGeneration != null &&
+                       r.Car.ModelGeneration.Model != null &&
+                       r.Car.ModelGeneration.Model.Name == modelName)
             .Select(r => r.Client)
+            .Where(client => client != null)
             .Distinct()
-            .OrderBy(c => c.FullName)
+            .OrderBy(c => c!.FullName)
             .ToListAsync();
 
         var result = clients
-            .Select(mapper.Map<ClientGetDto>)
+            .Where(client => client != null)
+            .Select(client => mapper.Map<ClientGetDto>(client!))
             .ToList();
 
         return Ok(result);
@@ -62,10 +62,10 @@ public class AnalyticsController(
             include: query => query.Include(r => r.Car));
 
         var rentedCars = rentals
-            .Where(r => r.RentalDate.AddHours(r.RentalHours) > currentDate)
-            .Select(r => r.Car)
+            .Where(r => r.Car != null && r.RentalDate.AddHours(r.RentalHours) > currentDate)
+            .Select(r => r.Car!)
             .Distinct()
-            .Select(mapper.Map<CarGetDto>)
+            .Select(car => mapper.Map<CarGetDto>(car))
             .ToList();
 
         return Ok(rentedCars);
@@ -83,7 +83,8 @@ public class AnalyticsController(
             include: query => query.Include(r => r.Car));
 
         var topCars = rentals
-            .GroupBy(r => r.Car)
+            .Where(r => r.Car != null)
+            .GroupBy(r => r.Car!)
             .Select(g => new { Car = g.Key, RentalCount = g.Count() })
             .OrderByDescending(x => x.RentalCount)
             .Take(5)
@@ -128,14 +129,17 @@ public class AnalyticsController(
         var rentals = await rentalsRepo.GetAllAsync(
             include: query => query
                 .Include(r => r.Car)
-                    .ThenInclude(c => c.ModelGeneration)
+                    .ThenInclude(c => c!.ModelGeneration)
                 .Include(r => r.Client));
 
         var topClients = rentals
+            .Where(r => r.Car != null &&
+                       r.Car.ModelGeneration != null &&
+                       r.Client != null)
             .Select(r => new
             {
-                Client = r.Client,
-                Amount = r.RentalHours * r.Car.ModelGeneration.RentalPricePerHour
+                Client = r.Client!,
+                Amount = r.RentalHours * r.Car!.ModelGeneration!.RentalPricePerHour
             })
             .GroupBy(x => x.Client)
             .Select(g => new { Client = g.Key, TotalAmount = g.Sum(x => x.Amount) })
