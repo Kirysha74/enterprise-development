@@ -1,16 +1,19 @@
 using AutoMapper;
-using CarRental.Application.Contracts.Dto;
-using CarRental.Domain.Entities;
-using CarRental.Domain.Interfaces;
 using Confluent.Kafka;
-using Microsoft.Extensions.Options;
+using CarRental.Application.Contracts.Dto;
+using CarRental.Domain.Interfaces;
 using System.Text.Json;
-
+using Microsoft.Extensions.Options;
 namespace CarRental.Api;
 
 /// <summary>
-/// Kafka background consumer that reads messages and persists rentals
+/// Kafka background consumer that reads messages and persists rentals.
 /// </summary>
+/// <param name="logger">Logging service.</param>
+/// <param name="consumer">Kafka consumer instance.</param>
+/// <param name="scopeFactory">Factory for creating service scopes.</param>
+/// <param name="mapper">Object mapper.</param>
+/// <param name="options">Kafka options params.</param>
 public class KafkaConsumerWorker(
     ILogger<KafkaConsumerWorker> logger,
     IConsumer<Ignore, string> consumer,
@@ -18,16 +21,19 @@ public class KafkaConsumerWorker(
     IMapper mapper,
     IOptions<KafkaOptions> options) : BackgroundService
 {
+    /// <summary>
+    /// Kafka topic to listen to.
+    /// </summary>
     private readonly KafkaOptions _options = options.Value;
 
+    /// <summary>
+    /// Consumes messages in a loop and processes them until cancellation.
+    /// </summary>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        logger.LogInformation("KafkaConsumerWorker started. Listening topic: {Topic}", _options.Topic);
-
-        // Подписка с ретраями
-        await SubscribeWithRetryAsync(stoppingToken);
-
         consumer.Subscribe(_options.Topic);
+
+        logger.LogInformation("KafkaConsumerWorker started. Listening topic: {Topic}", _options.Topic);
 
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -44,46 +50,16 @@ public class KafkaConsumerWorker(
                 if (dto == null)
                 {
                     logger.LogWarning("Failed to deserialize message: {Value}", consumeResult.Message.Value);
-                    consumer.Commit(consumeResult);
                     continue;
                 }
 
                 using var scope = scopeFactory.CreateScope();
-                var rentalRepo = scope.ServiceProvider
-                    .GetRequiredService<IRepository<Rental>>();
-                var carRepo = scope.ServiceProvider
-                    .GetRequiredService<IRepository<Car>>();
-                var clientRepo = scope.ServiceProvider
-                    .GetRequiredService<IRepository<Client>>();
+                var applicationRepo = scope.ServiceProvider
+                    .GetRequiredService<IRepository<Domain.Entities.Rental>>();
 
-                // Проверка существования автомобиля и клиента
-                var car = await carRepo.GetByIdAsync(dto.CarId);
-                if (car == null)
-                {
-                    logger.LogWarning("Car with Id {CarId} does not exist", dto.CarId);
-                    consumer.Commit(consumeResult);
-                    continue;
-                }
-
-                var client = await clientRepo.GetByIdAsync(dto.ClientId);
-                if (client == null)
-                {
-                    logger.LogWarning("Client with Id {ClientId} does not exist", dto.ClientId);
-                    consumer.Commit(consumeResult);
-                    continue;
-                }
-
-                // Создание Rental из DTO
-                var rental = mapper.Map<Rental>(dto);
-
-                var addedRental = await rentalRepo.AddAsync(rental);
-                logger.LogInformation("Saved Rental from Kafka: Id={Id}, CarId={CarId}, ClientId={ClientId}, Date={Date}, Hours={Hours}",
-                    addedRental.Id,
-                    addedRental.CarId,
-                    addedRental.ClientId,
-                    addedRental.RentalDate,
-                    addedRental.RentalHours);
-
+                var entity = mapper.Map<Domain.Entities.Rental>(dto);
+                var addedEntity = await applicationRepo.AddAsync(entity);
+                logger.LogInformation("Saved Application: {@Application}", addedEntity);
                 consumer.Commit(consumeResult);
             }
             catch (ConsumeException cex)
@@ -93,30 +69,6 @@ public class KafkaConsumerWorker(
             catch (Exception ex)
             {
                 logger.LogError(ex, "Unexpected consumer error");
-            }
-        }
-    }
-
-    private async Task SubscribeWithRetryAsync(CancellationToken stoppingToken)
-    {
-        const int maxRetries = 5;
-        for (int retry = 0; retry < maxRetries; retry++)
-        {
-            try
-            {
-                consumer.Subscribe(_options.Topic);
-                logger.LogInformation("Successfully subscribed to Kafka topic: {Topic}", _options.Topic);
-                return;
-            }
-            catch (Exception ex)
-            {
-                logger.LogWarning(ex, "Failed to subscribe to Kafka (attempt {Retry}/{MaxRetries})",
-                    retry + 1, maxRetries);
-
-                if (retry == maxRetries - 1)
-                    throw;
-
-                await Task.Delay(TimeSpan.FromSeconds(Math.Pow(2, retry)), stoppingToken);
             }
         }
     }

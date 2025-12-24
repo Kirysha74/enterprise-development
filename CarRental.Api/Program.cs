@@ -1,14 +1,14 @@
+using Confluent.Kafka;
+using CarRental.Api;
 using CarRental.Application.Contracts;
 using CarRental.Domain.Entities;
 using CarRental.Domain.Interfaces;
 using CarRental.Infrastructure.Persistence;
 using CarRental.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System.Reflection;
 using System.Text.Json.Serialization;
-using CarRental.Api;
-using Confluent.Kafka;
-using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,34 +45,6 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
 
-builder.Services.AddOptions<KafkaOptions>()
-    .Bind(builder.Configuration.GetSection("Kafka"));
-
-builder.Services.AddHostedService<KafkaConsumerWorker>();
-
-builder.Services.AddSingleton(sp =>
-{
-    var config = sp.GetRequiredService<IConfiguration>();
-    var kafkaOptions = sp.GetRequiredService<IOptions<KafkaOptions>>().Value;
-
-    var kafkaConnection = config.GetConnectionString("KafkaConnection")
-        ?? throw new InvalidOperationException("KafkaConnection string is missing");
-
-    var consumerConfig = new ConsumerConfig
-    {
-        BootstrapServers = kafkaConnection,
-        GroupId = kafkaOptions.GroupId,
-        AutoOffsetReset = AutoOffsetReset.Earliest,
-        EnableAutoCommit = false,
-        FetchMinBytes = kafkaOptions.FetchMinBytes,
-        EnableAutoOffsetStore = false,
-        SessionTimeoutMs = 45000,
-        MaxPollIntervalMs = 300000
-    };
-
-    return new ConsumerBuilder<Ignore, string>(consumerConfig).Build();
-});
-
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
         builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -83,6 +55,32 @@ builder.Services.AddScoped<IRepository<Client>, DbRepository<Client>>();
 builder.Services.AddScoped<IRepository<CarModel>, DbRepository<CarModel>>();
 builder.Services.AddScoped<IRepository<ModelGeneration>, DbRepository<ModelGeneration>>();
 builder.Services.AddScoped<IRepository<Rental>, DbRepository<Rental>>();
+
+builder.Services.AddOptions<KafkaOptions>()
+    .Bind(builder.Configuration.GetSection("Kafka"));
+
+builder.Services.AddHostedService<KafkaConsumerWorker>();
+
+builder.Services.AddSingleton(sp =>
+{
+    var config = sp.GetRequiredService<IConfiguration>();
+
+    var kafkaConnection = config.GetConnectionString("KafkaConnection")
+        ?? throw new InvalidOperationException("KafkaConnection string is missing");
+
+    var kafkaOptions = sp.GetRequiredService<IOptions<KafkaOptions>>().Value;
+
+    var consumerConfig = new ConsumerConfig
+    {
+        BootstrapServers = kafkaConnection,
+        GroupId = kafkaOptions.GroupId,
+        AutoOffsetReset = AutoOffsetReset.Earliest,
+        EnableAutoCommit = false,
+        FetchMinBytes = kafkaOptions.FetchMinBytes
+    };
+
+    return new ConsumerBuilder<Ignore, string>(consumerConfig).Build();
+});
 
 var app = builder.Build();
 

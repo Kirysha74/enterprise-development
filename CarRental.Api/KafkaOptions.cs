@@ -1,24 +1,22 @@
-using Confluent.Kafka;
-
 namespace CarRental.Api;
 
 /// <summary>
-/// Represents configuration settings for Kafka integration
+/// Represents configuration settings for Kafka integration.
 /// </summary>
 public class KafkaOptions
 {
     /// <summary>
-    /// Kafka topic to consume messages from
+    /// Kafka topic to consume messages to.
     /// </summary>
-    public string Topic { get; set; } = "rental-contracts-topic";
+    public string Topic { get; set; } = "kafka-topic";
 
     /// <summary>
-    /// Kafka group id
+    /// Kafka group id to consume messages to.
     /// </summary>
-    public string GroupId { get; set; } = "car-rental-group";
+    public string GroupId { get; set; } = "default-group";
 
     /// <summary>
-    /// Kafka minimal bytes fetch
+    /// Kafka minimal bytes fetch.
     /// </summary>
     public int FetchMinBytes { get; set; } = 1;
 }
